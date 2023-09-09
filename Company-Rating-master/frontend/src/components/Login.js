@@ -6,16 +6,12 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const auth = localStorage.getItem('user');
-        if (auth) {
-            // navigate("/")
-        }
-    }, [])
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault();
         console.log(email, password, role )
         let result = await fetch("http://localhost:3400/login", {
             method: 'post',
@@ -25,15 +21,21 @@ const Login = () => {
             }
         });
         result = await result.json();
-        // console.log(result.registration)
+        console.log(result.registration)
+        if(!result.registration){
+            setError(result.error);
+            setTimeout(()=>{
+				setError("")
+			}, 5000)
+        }else
         if (result.registration.role === "user") {
-            localStorage.setItem('email', JSON.stringify(result.registration.email));
+            localStorage.setItem('role', result.registration.role);
+            localStorage.setItem('id', result.registration._id);
             navigate("/userDashboard")
         } else if(result.registration.role === "admin") {
-            localStorage.setItem('email', JSON.stringify(result.registration.email));
+            localStorage.setItem('role', result.registration.role);
+            localStorage.setItem('id', result.registration._id);
             navigate("/adminDashboard")
-        }else{
-            alert(result.error)
         }
     }
 
@@ -43,25 +45,33 @@ const Login = () => {
                 <img src={loginpic} />
             </section>
             <section className='LoginForm'>
-                <h1>Login</h1>
-                <p>Hello! Please enter your details for login.</p>
-                <input type="text" className="form-control" placeholder='Enter Email'
-                    onChange={(e) => setEmail(e.target.value)} value={email} />
-                <input type="password" className="form-control" placeholder='Enter Password'
-                    onChange={(e) => setPassword(e.target.value)} value={password} />
+                <h1 className='text-center'>Login</h1>
+                <p className='text-center'>Hello! Please enter your details for login.</p>
+                {
+                    error ? <p className='text-center text-danger mb-2'>{error}</p> : ""
+                }
+                <form onSubmit={handleLogin}>
                 <div class="input-group border-bottom mb-3">
-                    <span class="input-group-text"><i class="zmdi zmdi-laptop-chromebook"></i></span>
-                    <select className='form-control' name='role' onChange={(e)=>setRole(e.target.value)}>
+                <input type="text" className="form-control" placeholder='Enter Email'
+                    onChange={(e) => setEmail(e.target.value)} value={email} required/>
+                </div>
+                <div class="input-group border-bottom mb-3">
+                <input type="password" className="form-control" placeholder='Enter Password'
+                    onChange={(e) => setPassword(e.target.value)} value={password} required/>
+                </div>
+                <div class="input-group border-bottom mb-3">
+                    <select className='form-control' required name='role' onChange={(e)=>setRole(e.target.value)}>
                         <option value="">Role</option>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
                     </select>
                 </div>
-                <p>Forgot Password</p>
-
-                <button onClick={handleLogin} className="btn btn-primary" type="button">Login</button>
-
-                <p>i Dont have an account for review & rating</p>
+                <div class="input-group border-bottom mb-3">
+                <input type="submit" className="btn btn-primary"/>
+                </div>
+                {/* <button onClick={handleLogin} className="btn btn-primary mb-4" type="button">Login</button> */}
+                </form>
+                <p>I Dont have an account for review & rating</p>
                 <Link to='register'>Register Now</Link>
             </section>
         </div>

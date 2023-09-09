@@ -13,7 +13,7 @@ const companySchema = new mongoose.Schema({
         type : String,
         required:true
     },
-    foundedOn : {
+    foundedon : {
         type : String,
         required:true
     }
