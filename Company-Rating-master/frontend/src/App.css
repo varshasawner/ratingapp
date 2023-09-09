@@ -1,0 +1,15 @@
+.login{
+  background: linear-gradient(rgb(235, 133, 251), rgb(175, 130, 238));
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100vh;
+}
+.LoginForm{
+  background-color: whitesmoke;
+  padding: 20px;
+  height: 400px;
+  width: 40%;
+  border-radius: 10px;
+
+}
